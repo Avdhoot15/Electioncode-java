@@ -1,0 +1,73 @@
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+public class ElectionWinner {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        HashMap<String, Integer> voteCount = new HashMap<>();
+
+        System.out.print("Enter number of candidates: ");
+        int candidateCount = scanner.nextInt();
+        scanner.nextLine(); // consume newline
+
+        System.out.println("Enter candidate names:");
+        for (int i = 0; i < candidateCount; i++) {
+            String candidate = scanner.nextLine().trim().toLowerCase();
+            if (!candidate.isEmpty()) {
+                voteCount.put(candidate, 0);
+            } else {
+                System.out.println("Candidate name cannot be empty. Please enter again:");
+                i--;  // repeat this iteration
+            }
+        }
+
+        System.out.print("Enter total number of votes: ");
+        int totalVotes = scanner.nextInt();
+        scanner.nextLine(); // consume newline
+
+        System.out.println("Enter votes (candidate names):");
+        for (int i = 0; i < totalVotes; i++) {
+            String vote = scanner.nextLine().trim().toLowerCase();
+            if (voteCount.containsKey(vote)) {
+                voteCount.put(vote, voteCount.get(vote) + 1);
+            } else {
+                System.out.println("Invalid vote for: " + vote + " (Ignored)");
+            }
+        }
+
+        String winner = "";
+        int maxVotes = -1;
+        int secondMaxVotes = -1;
+
+        System.out.println("\nVote Count:");
+        for (Map.Entry<String, Integer> entry : voteCount.entrySet()) {
+            String candidate = entry.getKey();
+            int votes = entry.getValue();
+            System.out.println(capitalize(candidate) + ": " + votes + " vote(s)");
+
+            if (votes > maxVotes) {
+                secondMaxVotes = maxVotes;
+                maxVotes = votes;
+                winner = candidate;
+            } else if (votes > secondMaxVotes) {
+                secondMaxVotes = votes;
+            }
+        }
+
+        int margin = maxVotes - secondMaxVotes;
+
+        System.out.println("\nElection Results:");
+        System.out.println("Winner: " + capitalize(winner));
+        System.out.println("Votes Received: " + maxVotes);
+        System.out.println("Winning Margin: " + margin + " vote(s)");
+
+        scanner.close();
+    }
+
+    // Helper function to format candidate names properly
+    private static String capitalize(String name) {
+        if (name == null || name.isEmpty()) return name;
+        return name.substring(0, 1).toUpperCase() + name.substring(1);
+    }
+}
